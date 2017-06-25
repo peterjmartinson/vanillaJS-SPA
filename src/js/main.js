@@ -1,6 +1,7 @@
 /* jshint esversion:6, browser:true */
 
 import View from './view';
+import { $on } from './util';
 
 class App {
   constructor() {
@@ -13,4 +14,5 @@ class App {
 
 const app = new App();
 
-window.addEventListener('load', () => app.init());
+// window.addEventListener('load', () => app.init());
+$on(window, 'load', () => app.init());
