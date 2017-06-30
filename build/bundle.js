@@ -4464,42 +4464,134 @@ return hooks;
 })));
 
 },{}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* jshint esversion:6, browser:true */
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* jshint esversion:6, browser:true */
+
+var Controller = function () {
+  function Controller(model, view) {
+    _classCallCheck(this, Controller);
+
+    this.model = model;
+    this.view = view;
+  }
+
+  _createClass(Controller, [{
+    key: "render",
+    value: function render() {
+      this.view.render(this.model.toJSON());
+    }
+  }, {
+    key: "setView",
+    value: function setView(hash) {
+      var validURL = /^#\/[\d]{2}\/[\d]{4}$/.test(hash);
+
+      if (validURL) {
+        var matches = hash.match(/^#\/[\d]{2}\/[\d]{4}$/);
+        var month = parseInt(matches[1], 10) - 1;
+        var year = parseInt(matches[2], 10);
+
+        this.model.setDate(month, year);
+      }
+
+      this.render();
+    }
+  }]);
+
+  return Controller;
+}();
+
+exports.default = Controller;
+
+},{}],3:[function(require,module,exports){
+'use strict';
 
 var _view = require('./view');
 
 var _view2 = _interopRequireDefault(_view);
 
+var _util = require('./util');
+
+var _model = require('./model');
+
+var _model2 = _interopRequireDefault(_model);
+
+var _controller = require('./controller');
+
+var _controller2 = _interopRequireDefault(_controller);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /* jshint esversion:6, browser:true */
+
+var App = function App() {
+  _classCallCheck(this, App);
+
+  var model = new _model2.default();
+  var view = new _view2.default();
+  this.controller = new _controller2.default(model, view);
+};
+
+var app = new App();
+
+var setView = function setView() {
+  app.controller.setView(document.location.hash);
+};
+
+(0, _util.$on)(window, 'load', setView);
+(0, _util.$on)(window, 'hashchange', setView);
+
+},{"./controller":2,"./model":4,"./util":6,"./view":7}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* jshint esversion:6, browser:true */
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var App = function () {
-  function App() {
-    _classCallCheck(this, App);
+var Model = function () {
+  function Model() {
+    _classCallCheck(this, Model);
 
-    this.view = new _view2.default();
+    this.now = (0, _moment2.default)().day(15);
   }
 
-  _createClass(App, [{
-    key: 'init',
-    value: function init() {
-      this.view.render();
+  _createClass(Model, [{
+    key: 'setDate',
+    value: function setDate(month, year) {
+      this.now.month(month).year(year);
+    }
+  }, {
+    key: 'toJSON',
+    value: function toJSON() {
+      var iso = this.now.toISOString();
+      return { iso: iso };
     }
   }]);
 
-  return App;
+  return Model;
 }();
 
-var app = new App();
+exports.default = Model;
 
-window.addEventListener('load', function () {
-  return app.init();
-});
-
-},{"./view":4}],3:[function(require,module,exports){
+},{"moment":1}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4542,16 +4634,30 @@ var example = html(_templateObject, answers.map(function (a) {
   return html(_templateObject2, a);
 }));
 
-var controls = function controls() {
-  var curr = (0, _moment2.default)();
-  var next = (0, _moment2.default)().add(1, 'month');
-  var prev = (0, _moment2.default)().subtract(1, 'month');
+var controls = function controls(data) {
+  var curr = (0, _moment2.default)(data.iso);
+  var next = (0, _moment2.default)(data.iso).add(1, 'month');
+  var prev = (0, _moment2.default)(data.iso).subtract(1, 'month');
   return html(_templateObject3, prev.format('MM'), prev.format('YYYY'), curr.format('MMMM'), curr.format('YYYY'), next.format('MM'), next.format('YYYY'));
 };
 
 exports.controls = controls;
 
-},{"moment":1}],4:[function(require,module,exports){
+},{"moment":1}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* jshint esversion:6, browser:true */
+
+var $on = function $on(target, event, handler) {
+  return target.addEventListener(event, handler);
+};
+
+exports.$on = $on;
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4573,8 +4679,8 @@ var View = function () {
 
   _createClass(View, [{
     key: 'render',
-    value: function render() {
-      this.el.innerHTML = (0, _template.controls)();
+    value: function render(data) {
+      this.el.innerHTML = (0, _template.controls)(data);
     }
   }]);
 
@@ -4583,4 +4689,4 @@ var View = function () {
 
 exports.default = View;
 
-},{"./template":3}]},{},[2]);
+},{"./template":5}]},{},[3]);

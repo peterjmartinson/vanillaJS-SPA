@@ -36,5 +36,17 @@ const controls = data => {
   `;
 };
 
+const day = data => html`
+  <li data-iso="${data.iso}">
+    <p class="date">${ moment(data.iso).format('D')}</p>
+  </li>
+`;
+
+const calendar = data => html`
+  ${controls(data)}
+  <ul id="calendar" class="full-widthweeks-${data.weekCount}">
+  //
+
+
 
 export {controls};
