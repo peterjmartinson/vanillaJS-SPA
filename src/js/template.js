@@ -44,8 +44,13 @@ const day = data => html`
 
 const calendar = data => html`
   ${controls(data)}
-  <ul id="calendar" class="full-widthweeks-${data.weekCount}">
-  //
+  <ul id="calendar" class="full-width weeks-${data.weekCount}">
+    ${data.days.map(data => day(data))}
+  </ul>
+`;
+
+export { calendar };
+
 
 
 

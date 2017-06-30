@@ -4579,10 +4579,29 @@ var Model = function () {
       this.now.month(month).year(year);
     }
   }, {
+    key: 'getDays',
+    value: function getDays() {
+      var days = [];
+      var calendarStart = (0, _moment2.default)(this.now).startOf('month');
+      var calendarEnd = (0, _moment2.default)(this.now).endOf('month');
+      var timeRange = calendarEnd.valueOf() - calendarStart.valueOf();
+      var daysInView = Math.floor(_moment2.default.duration(timerange).asDays());
+
+      for (var i = 0; i <= daysInView; i++) {
+        days.push({
+          iso: (0, _moment2.default)(calendarStart).add(i, 'days').toISOString()
+        });
+      }
+
+      return days;
+    }
+  }, {
     key: 'toJSON',
     value: function toJSON() {
       var iso = this.now.toISOString();
-      return { iso: iso };
+      var days = this.getDays();
+
+      return { iso: iso, days: days };
     }
   }]);
 
@@ -4597,11 +4616,13 @@ exports.default = Model;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.controls = undefined;
+exports.controls = exports.calendar = undefined;
 
 var _templateObject = _taggedTemplateLiteral(['\nThe answers to 4*4 and 8*8 are ', ''], ['\nThe answers to 4*4 and 8*8 are ', '']),
     _templateObject2 = _taggedTemplateLiteral(['\n  answer: ', '\n'], ['\n  answer: ', '\n']),
-    _templateObject3 = _taggedTemplateLiteral(['\n    <div id="controls">\n      <a class="item" href="#/', '/', '">Back one month</a>\n      <p class="item">', ', ', '</p>\n      <a class="item" href="#/', '/', '">Forward one month</a>\n    </div>\n  '], ['\n    <div id="controls">\n      <a class="item" href="#/', '/', '">Back one month</a>\n      <p class="item">', ', ', '</p>\n      <a class="item" href="#/', '/', '">Forward one month</a>\n    </div>\n  ']);
+    _templateObject3 = _taggedTemplateLiteral(['\n    <div id="controls">\n      <a class="item" href="#/', '/', '">Back one month</a>\n      <p class="item">', ', ', '</p>\n      <a class="item" href="#/', '/', '">Forward one month</a>\n    </div>\n  '], ['\n    <div id="controls">\n      <a class="item" href="#/', '/', '">Back one month</a>\n      <p class="item">', ', ', '</p>\n      <a class="item" href="#/', '/', '">Forward one month</a>\n    </div>\n  ']),
+    _templateObject4 = _taggedTemplateLiteral(['\n  <li data-iso="', '">\n    <p class="date">', '</p>\n  </li>\n'], ['\n  <li data-iso="', '">\n    <p class="date">', '</p>\n  </li>\n']),
+    _templateObject5 = _taggedTemplateLiteral(['\n  ', '\n  <ul id="calendar" class="full-width weeks-', '">\n    ', '\n  </ul>\n'], ['\n  ', '\n  <ul id="calendar" class="full-width weeks-', '">\n    ', '\n  </ul>\n']);
 
 var _moment = require('moment');
 
@@ -4641,6 +4662,17 @@ var controls = function controls(data) {
   return html(_templateObject3, prev.format('MM'), prev.format('YYYY'), curr.format('MMMM'), curr.format('YYYY'), next.format('MM'), next.format('YYYY'));
 };
 
+var day = function day(data) {
+  return html(_templateObject4, data.iso, (0, _moment2.default)(data.iso).format('D'));
+};
+
+var calendar = function calendar(data) {
+  return html(_templateObject5, controls(data), data.weekCount, data.days.map(function (data) {
+    return day(data);
+  }));
+};
+
+exports.calendar = calendar;
 exports.controls = controls;
 
 },{"moment":1}],6:[function(require,module,exports){
@@ -4680,7 +4712,7 @@ var View = function () {
   _createClass(View, [{
     key: 'render',
     value: function render(data) {
-      this.el.innerHTML = (0, _template.controls)(data);
+      this.el.innerHTML = (0, _template.calendar)(data);
     }
   }]);
 
