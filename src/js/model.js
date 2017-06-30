@@ -9,4 +9,8 @@ export default class Model {
   setDate(month, year) {
     this.now.month(month).year(year);
   }
+  toJSON() {
+    const iso = this.now.toISOString();
+    return { iso };
+  }
 }
