@@ -4495,7 +4495,7 @@ var Controller = function () {
       var validURL = /^#\/[\d]{2}\/[\d]{4}$/.test(hash);
 
       if (validURL) {
-        var matches = hash.match(/^#\/[\d]{2}\/[\d]{4}$/);
+        var matches = hash.match(/^#\/([\d]{2})\/([\d]{4})$/);
         var month = parseInt(matches[1], 10) - 1;
         var year = parseInt(matches[2], 10);
 
@@ -4585,7 +4585,7 @@ var Model = function () {
       var calendarStart = (0, _moment2.default)(this.now).startOf('month');
       var calendarEnd = (0, _moment2.default)(this.now).endOf('month');
       var timeRange = calendarEnd.valueOf() - calendarStart.valueOf();
-      var daysInView = Math.floor(_moment2.default.duration(timerange).asDays());
+      var daysInView = Math.floor(_moment2.default.duration(timeRange).asDays());
 
       for (var i = 0; i <= daysInView; i++) {
         days.push({

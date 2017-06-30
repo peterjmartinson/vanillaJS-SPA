@@ -14,7 +14,7 @@ export default class Model {
     const calendarStart = moment(this.now).startOf('month');
     const calendarEnd = moment(this.now).endOf('month');
     const timeRange = calendarEnd.valueOf() - calendarStart.valueOf();
-    const daysInView = Math.floor(moment.duration( timerange ).asDays());
+    const daysInView = Math.floor(moment.duration( timeRange ).asDays());
 
     for (let i = 0; i <= daysInView; i++) {
       days.push({

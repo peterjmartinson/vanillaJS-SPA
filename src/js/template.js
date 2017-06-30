@@ -17,12 +17,8 @@ const html = (literal, ...cooked) => {
   result += literal[literal.length - 1];
   return result;
 };
-const answers = [16,64];
-const example = html`
-The answers to 4*4 and 8*8 are ${answers.map(a => html`
-  answer: ${a}
-`)}`;
 
+// Output the main page's controls, using the `html` thing above
 const controls = data => {
   const curr = moment(data.iso);
   const next = moment(data.iso).add(1, 'month');
